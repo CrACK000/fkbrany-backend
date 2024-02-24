@@ -1,24 +1,38 @@
 import express from 'express';
 import cors from 'cors';
+import router from './router';
+import passport from './plugins/passport';
+import { closeDb, connectToDb } from './db';
+import bodyParser from 'body-parser';
 
 export const app = express();
 
-app.use(cors({ origin: true }));
+app.set('trust proxy', true);
 
-app.use(express.json());
-app.use(express.raw({ type: 'application/vnd.custom-type' }));
-app.use(express.text({ type: 'text/html' }));
-
-// Healthcheck endpoint
-app.get('/', (req, res) => {
-  res.status(200).send({ status: 'ok' });
+app.use(async (req, res, next) => {
+  try {
+    await connectToDb();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
-const api = express.Router();
+app.use(cors({ origin: process.env.FRONTEND, credentials: true }));
 
-api.get('/hello', (req, res) => {
-  res.status(200).send({ message: 'hello world' });
+app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }))
+app.use(passport.initialize())
+app.use(passport.session(undefined))
+app.use(bodyParser.json())
+
+app.use('/api/v1', router);
+
+process.on('SIGINT', async () => {
+  await closeDb();
+  process.exit(0);
 });
 
-// Version the api
-app.use('/api/v1', api);
+process.on('SIGTERM', async () => {
+  await closeDb();
+  process.exit(0);
+});
