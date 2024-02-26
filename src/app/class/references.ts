@@ -126,7 +126,7 @@ export class References {
       } catch (error) {
 
         console.log('Error occurred while deleting the images from S3', error);
-        return res.send({ success: false, message: "Image deletion from S3 failed" });
+        return res.send({ success: false, message: "Odstránenie obrázka z úložiska zlyhalo." });
 
       }
 
@@ -136,12 +136,12 @@ export class References {
     try {
 
       await getDb().collection('references').deleteOne({ _id: id });
-      return res.send({ success: true, message: "Reference removed" });
+      return res.send({ success: true, message: "Referencia bola odstránená." });
 
     } catch (error) {
 
       console.error(error);
-      return res.send({ success: false, message: "Failed to remove reference from the database." });
+      return res.send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
 
     }
 
@@ -186,7 +186,7 @@ export class References {
     } catch (error) {
 
       console.log('Error occurred while deleting the image', error);
-      return res.send({ success: false, message: "Image deletion failed" });
+      return res.send({ success: false, message: "Odstránenie obrázka zlyhalo." });
 
     }
 
@@ -201,11 +201,11 @@ export class References {
 
       if (result) {
 
-        return res.send({ success: true, message: "Image removed.", gallery: result.gallery });
+        return res.send({ success: true, message: "Obrázok bol odstránený.", gallery: result.gallery });
 
       } else {
 
-        return res.send({ success: false, message: "No document found or updated with the given _id." });
+        return res.send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
 
       }
 
@@ -254,11 +254,11 @@ export class References {
 
       if (result && result.matchedCount > 0) {
 
-        return res.send({ success: true, message: "Main image set.", gallery: referenceData.gallery });
+        return res.send({ success: true, message: "Hlavný obrázok nastavený.", gallery: referenceData.gallery });
 
       } else {
 
-        return res.send({ success: false, message: "No document found or updated with the given _id." });
+        return res.send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
 
       }
 

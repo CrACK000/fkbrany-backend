@@ -46,6 +46,41 @@ export class Actions {
 
   }
 
+  private async create(validate: any, mail: any, collection: string, document: any, message: string, res: any) {
+
+    // Valid
+    const errors = this.validate(validate);
+    if (errors !== null) {
+      return res.send({
+        success: false,
+        message: "Niekde nastala chyba. Skontrolujte či ste všetko vyplnili správne.",
+        errors: errors
+      });
+    }
+
+    // Post Mail
+    if (!this.mail(mail)) {
+      return res.send({
+        success: false,
+        message: 'Niekde nastala chyba. Skúste to neskor.',
+        errors: { where: 'mail', message: 'Zlyhalo odoslanie emailu.' }
+      });
+    }
+
+
+    try {
+
+      await getDb().collection(collection).insertOne(document);
+      return res.send({ success: true, message: message });
+
+    } catch(error) {
+
+      return res.send({ success: false, message: "Niekde nastala chyba. Skúste to neskor.", errors: { where: "db", message: error } });
+
+    }
+
+  }
+
   public validate(fields: string[]) {
     const schemaRules: any = {};
 
@@ -309,41 +344,6 @@ export class Actions {
     } as SendMailOptions;
 
     await this.create(validate, mail, collection, document, message, res)
-
-  }
-
-  private async create(validate: any, mail: any, collection: string, document: any, message: string, res: any) {
-
-    // Valid
-    const errors = this.validate(validate);
-    if (errors !== null) {
-      return res.send({
-        success: false,
-        message: "Niekde nastala chyba. Skontrolujte či ste všetko vyplnili správne.",
-        errors: errors
-      });
-    }
-
-    // Post Mail
-    if (!this.mail(mail)) {
-      return res.send({
-        success: false,
-        message: 'Niekde nastala chyba. Skúste to neskor.',
-        errors: { where: 'mail', message: 'Zlyhalo odoslanie emailu.' }
-      });
-    }
-
-
-    try {
-
-      await getDb().collection(collection).insertOne(document);
-      return res.send({ success: true, message: message });
-
-    } catch(error) {
-
-      return res.send({ success: false, message: "Niekde nastala chyba. Skúste to neskor.", errors: { where: "db", message: error } });
-
-    }
 
   }
 

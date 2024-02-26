@@ -34,9 +34,13 @@ export class Authentication {
   static async checkAuth(req: any, res: any) {
 
     if(req.user) {
+
       res.send({ loggedIn: true, user: req.user });
+
     } else {
-      res.send({ loggedIn: false });
+
+      res.send({ loggedIn: false, user: null });
+
     }
 
   }
@@ -46,10 +50,14 @@ export class Authentication {
     req.logout(function (err: any) {
 
       if (err) {
+
         console.log(err);
         res.send({ success: false });
+
       } else {
+
         res.send({ success: true, message: "Bol si odhlásený z účtu." });
+
       }
 
     });
