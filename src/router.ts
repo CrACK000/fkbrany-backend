@@ -1,10 +1,10 @@
 import express from 'express';
-import { Actions } from './app/Controllers/actions';
-import { References } from './app/Controllers/references';
+import { Actions } from './app/class/actions';
+import { References } from './app/class/references';
 import multer from 'multer';
-import { Authentication } from './app/Controllers/auth';
+import { Authentication } from './app/class/auth';
 import { upload } from './plugins/aws'
-import { Image } from './app/Resources/get-image';
+import { Image } from './app/resources/get-image';
 
 const router = express.Router();
 
@@ -40,11 +40,14 @@ router.get('/logout', Authentication.logout)
 
 router.get( '/references', References.all);
 router.get( '/reference/view/:id', References.view);
-router.post('/references/create', upload.array('files', 4), References.create);
-router.post('/references/edit/:id', upload.array('files', 4), References.edit);
+router.post('/references/create', upload.array('files', 8), References.create);
+
+router.post('/references/edit/:id', upload.array('files', 8), References.edit);
+router.post('/references/edit/:id/image', References.setMainImage);
+
 router.post('/references/remove/:id', References.remove);
 router.post('/references/remove/:id/image', References.removeImage);
 
-router.get('/image/:dir/:img', Image.getImg);
+router.get('/image/:dir/:img/:resolution?', Image.getImg);
 
 export default router
