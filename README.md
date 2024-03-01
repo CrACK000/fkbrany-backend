@@ -1,5 +1,5 @@
 # FK brány s. r. o.
 
-in process...
+v1.0.5 beta
 
 
