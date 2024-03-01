@@ -2,6 +2,7 @@ import { validate } from '../../plugins/validate';
 import Joi from 'joi';
 import { getDb } from '../../plugins/db';
 import { FindOneAndUpdateOptions, ObjectId } from 'mongodb';
+import bcrypt from 'bcrypt';
 
 export class Settings {
 
@@ -57,7 +58,60 @@ export class Settings {
 
   static async changePassword(req: any, res: any) {
 
-    // in process
+    const { current_password, new_password } = req.body;
+    const saltRounds = 10;
+    const userId = new ObjectId(String(req.user._id));
+
+    try {
+
+      const fetch = await getDb().collection('admin').findOne({ _id: userId })
+
+      if (fetch) {
+
+        const hashedPassword = fetch.password
+
+        bcrypt.compare(current_password, hashedPassword, (compareError, isMatch) => {
+          if (compareError) {
+            console.error("Chyba pri overovaní.");
+            return res.send({ success: false, message: "Chyba pri overovaní." });
+          }
+
+          if (!isMatch) {
+            console.error("Nesprávne heslo.");
+            return res.send({ success: false, message: "Nesprávne heslo." });
+          }
+
+          bcrypt.hash(new_password, saltRounds, async (hashError, hash) => {
+            if (hashError) {
+              console.error("Chyba pri zmene hesla.");
+              return res.send({ success: false, message: "Chyba pri zmene hesla." });
+            }
+
+            try {
+
+              await getDb().collection('admin').updateOne({ _id: userId }, { $set: { password: hash } })
+
+              console.error("Heslo bolo zmenené.");
+              return res.send({ success: true, message: "Heslo bolo zmenené." });
+
+            } catch (error) {
+
+              console.error("Databáza neodpovedá, skúste to neskôr.");
+              return res.send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
+
+            }
+
+          })
+        })
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+      return res.send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
+
+    }
 
   }
 

@@ -52,6 +52,33 @@ export class References {
 
   }
 
+  static async counter(req: any, res: any) {
+
+    // Verify the ID
+    if (!req.body.id || !ObjectId.isValid(String(req.body.id))) {
+      console.log("Invalid id.")
+      return res.send({  success: false, message: "Invalid id." });
+    }
+
+    const id = new ObjectId(String(req.body.id))
+
+    try {
+      const result = await getDb().collection('references').updateOne(
+        { _id: id },
+        { $inc: { views: 1 }}
+      )
+      if (result.matchedCount == 0) {
+        res.status(404).send({ success: false, message: `Dokument s ID ${req.body.id} nebol nájdený.` });
+      } else {
+        res.send({ success: true, message: "Počet zhliadnutí aktualizovaný." });
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(500).send({ success: false, message: "Databáza neodpovedá, skúste to neskôr." });
+    }
+
+  }
+
   static async edit(req: any, res: any) {
 
     // Verify the ID

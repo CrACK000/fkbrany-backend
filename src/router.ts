@@ -40,13 +40,14 @@ router.get('/logout', Authentication.logout)
 router.get( '/references', References.all);
 router.get( '/reference/view/:id', References.view);
 router.post('/references/create', upload.array('files', 8), References.create);
+router.post('/references/counter', References.counter);
 router.post('/references/edit/:id', upload.array('files', 8), References.edit);
 router.post('/references/edit/:id/image', References.setMainImage);
 router.post('/references/remove/:id', References.remove);
 router.post('/references/remove/:id/image', References.removeImage);
 
 /**     SETTINGS     **/
-router.get('/settings', Settings.get)
+router.get( '/settings', Settings.get)
 router.post('/settings/web', Settings.webSettings)
 router.post('/settings/password', Settings.changePassword)
 

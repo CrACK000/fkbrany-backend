@@ -31,3 +31,4 @@ yarn-error.log*
 dist/
 /config.env
 /uploads/
+/src/__tests__/
