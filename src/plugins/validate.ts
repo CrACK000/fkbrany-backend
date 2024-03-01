@@ -2,6 +2,14 @@ import Joi from 'joi';
 
 export const validate = {
 
+  entryGate: Joi.boolean(),
+
+  montage: Joi.boolean(),
+
+  motor: Joi.boolean(),
+
+  fenceParts: Joi.boolean(),
+
   name: Joi.string().min(3).max(30).messages({
 
     'string.min': 'Meno musí obsahovať minimálne 3 znaky.',
@@ -10,7 +18,7 @@ export const validate = {
 
   }),
 
-  surname: Joi.string().required().max(40).messages({
+  surname: Joi.string().optional().max(40).messages({
 
     'string.empty': 'Vyplňte priezvisko.',
     'string.max': 'Priezvisko je príliš dlhé.',
@@ -29,25 +37,25 @@ export const validate = {
 
   }),
 
-  gate: Joi.string().required().messages({
+  gate: Joi.string().optional().messages({
 
     'string.empty': 'Vyberte typ brány.',
 
   }),
 
-  styleGate: Joi.string().required().messages({
+  styleGate: Joi.string().optional().messages({
 
     'string.empty': 'Vyberte vzor brány.',
 
   }),
 
-  widthGate: Joi.string().required().messages({
+  widthGate: Joi.string().optional().messages({
 
     'string.empty': 'Zadajte šírku otvoru pre bránu.',
 
   }),
 
-  heightGate: Joi.string().required().messages({
+  heightGate: Joi.string().optional().messages({
 
     'string.empty': 'Zadajte výšku otvoru pre bránu.',
 
@@ -71,9 +79,16 @@ export const validate = {
 
   }),
 
-  msg: Joi.string().required().messages({
+  msg: Joi.string().optional().messages({
 
     'string.empty': 'Napíšte nám správu.',
 
   }),
+
+  fencePartsList: Joi.when('fenceParts', { is: true, then: Joi.array().min(1), otherwise: Joi.optional() }).messages({
+
+    'array.min': 'Pridajte plotové dielce.'
+
+  }),
+
 }
